@@ -1,0 +1,7 @@
+{
+    "name":  "safepointer",
+    "cpppmversion":  "0.3.3",
+	"type": "header-only-library",
+    "scripts":  {},
+    "dependencies":  {}
+}
