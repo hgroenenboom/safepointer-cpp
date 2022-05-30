@@ -1,12 +1,10 @@
 #include <cassert>
 #include <memory>
 
-namespace hgdsp
-{
-
 class SafePointable
 {
 public:
+	#ifdef HG_SAFEPOINTER_CHECK_POINTERS
 	SafePointable()
 	{
 		exists = std::make_shared<bool>(true);
@@ -21,23 +19,40 @@ public:
 
 private:
 	std::shared_ptr<bool> exists;
+	#else
+	SafePointable() = default;
+	~SafePointable() = default;
+	#endif
 };
 
-class SafePointer : public std::shared_ptr<bool>
+class SafePointer : private std::shared_ptr<bool>
 {
 public:
 	SafePointer(SafePointable& safePointable)
 	{
 		*(static_cast<std::shared_ptr<bool>*>(this)) = safePointable.reference();
 	}
+	
+	bool operator ==(bool other) const 
+	{
+		return other == (bool)*this;
+	}
+	
+	operator bool() const 
+	{
+		return **(static_cast<const std::shared_ptr<bool>*>(this));
+	}
+	
+	bool valid() const 
+	{
+		return (bool)*this;
+	}
 };
 
-}
-
-#ifdef HGDSP_CHECK_POINTERS
-#define HGDSP_MAKE_SAFEPOINTER(x) hgdsp::SafePointer x##SafePointer { *x };
-#define HGDSP_CHECK_SAFEPOINTER(x) assert(*x##SafePointer == true);
+#ifdef HG_SAFEPOINTER_CHECK_POINTERS
+#define HG_MAKE_SAFEPOINTER(x) SafePointer x##SafePointer { *x };
+#define HG_ASSERT_SAFEPOINTER(x) assert(x##SafePointer.valid());
 #else
-#define HGDSP_MAKE_SAFEPOINTER(x) ;
-#define HGDSP_CHECK_SAFEPOINTER(x) ;
+#define HG_MAKE_SAFEPOINTER(x) ;
+#define HG_ASSERT_SAFEPOINTER(x) ;
 #endif
