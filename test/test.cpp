@@ -1,5 +1,5 @@
 #define HG_SAFEPOINTER_CHECK_POINTERS 1
-#include "safepointer.h"
+#include "../include/safepointer.h"
 
 #include <iostream>
 
