@@ -1,1 +1,1 @@
-simple safe pointer class, makes it possible to inspect whether an object still exists after it has been deleted.
+A simple experimental C++ safe-pointer class, makes it possible to check whether an object still exists after it has already been deleted.
